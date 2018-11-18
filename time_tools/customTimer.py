@@ -23,11 +23,13 @@ class Custom_timer():
         """
 
         if len(time_duration) is not len(time_format):
-            raise RuntimeError('Time format and duration must have the same number of components')
+            raise ValueError('Time format and duration must have the same number of components')
+        if not callback:
+            raise ValueError('callback must be defined')
 
         self.tick_length = tick_length
         self.max_time = time_format
-        self.current = list(time_duration)
+        self.current = time_duration[:]
         self.callback = callback
         self.args = args
         self.timer = None
@@ -69,13 +71,10 @@ class Custom_timer():
         """
             Changes callback execution depending of wether there are arguments or not
         """
-
         if self.callback and self.args:
-            self.calback(*self.args)
-        elif self.callback:
-            self.callback()
-        else:
-            print('Time\'s up ')
+            self.callback(*self.args)
+            return
+        self.callback()
 
 
 def custom_time_builder(time_format, time_duration = None):
@@ -85,9 +84,7 @@ def custom_time_builder(time_format, time_duration = None):
         Returns
             dict containing a 'time_format' tuple and a 'duration' list
     """
-
     time_format = [int(i) for i in time_format.split(":")]
-
     if time_duration:
         time_duration = [int(i) for i in time_duration.split(':')]
         if len(time_duration) is not len(time_format):
@@ -108,14 +105,9 @@ def normalize_time(time_format, time_duration):
 
     for i in range(len(time_duration)):
         if time_duration[i] > time_format[i]:
-            if i >= len(time_duration)-1:
+            if i == len(time_duration)-1:
                 continue
-            time_duration[i+1] += int(time_duration[i] / time_format[i])
+            time_duration[i+1] += time_duration[i] // time_format[i]
             time_duration[i] = time_duration[i] % time_format[i]
-
-    if time_duration[len(time_duration)-1] > time_format[len(time_duration)-1]:
-        time_duration.append(int(time_duration[i] / time_format[i]))
-        time_format += (int(time_duration[i] / time_format[i]),)
-        time_duration[len(time_duration)-2] = time_duration[i] % time_format[i]
 
     return time_duration,time_format
