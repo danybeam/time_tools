@@ -36,7 +36,7 @@ class Stopwatch():
 
     def stop(self):
         """
-            stops stopwatchelapsed time gets stored but is lost upon restarting
+            stops stopwatch elapsed time gets stored but is lost upon restarting
         """
 
         if self.is_stopped:
@@ -52,7 +52,6 @@ class Stopwatch():
         """
         if self.is_stopped:
             raise RuntimeError('Stopwatch is currently stopped, can\'t be paused')
-
         self.elapsed_time += time.time() - self.start_time
         self.is_paused = True
 
