@@ -15,7 +15,6 @@ class Stopwatch():
         """
             initialize variables and control flags
         """
-
         self.start_time = -1.0
         self.elapsed_time = 0.0
         self.is_stopped = True
@@ -25,7 +24,6 @@ class Stopwatch():
         """
             sets flags and variables
         """
-
         if self.is_stopped and not self.is_paused:
             self.is_stopped = False
             self.elapsed_time = 0.0
@@ -33,18 +31,17 @@ class Stopwatch():
             self.is_paused = False
         else:
             raise RuntimeError('Flags are unproperly set notify code author for him to revise logic')
-
         self.start_time = time.time()
 
 
     def stop(self):
         """
-            stops stopwatchelapsed time gets stored but is lost upon restarting
+            stops stopwatch elapsed time gets stored but is lost upon restarting
         """
 
         if self.is_stopped:
             raise RuntimeError('Stopwatch is already stopped')
-        self.elapsed_time += time.time() - start_time
+        self.elapsed_time += time.time() - self.start_time
         self.is_stopped = True
         self.is_paused = False
 
@@ -55,7 +52,6 @@ class Stopwatch():
         """
         if self.is_stopped:
             raise RuntimeError('Stopwatch is currently stopped, can\'t be paused')
-
         self.elapsed_time += time.time() - self.start_time
         self.is_paused = True
 
