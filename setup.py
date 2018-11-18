@@ -14,7 +14,7 @@ from setuptools import find_packages, setup, Command
 
 # Package meta-data.
 NAME = 'time_tools'
-DESCRIPTION = 'Time gizmos for python'
+DESCRIPTION = 'Time tools for python'
 URL = 'https://github.com/danybeam/time_tools'
 EMAIL = 'danybeam@gmail.com'
 AUTHOR = 'danybeam'
@@ -51,15 +51,20 @@ class UploadCommand(Command):
     """Support setup.py upload."""
 
     description = 'Build and publish the package.'
-    user_options = []
+    user_options = [
+        ('user=', 'u', "Specify the user"),
+        ('password=', 'p', "Specify the user password")
+    ]
 
     @staticmethod
     def status(s):
         """Prints things in bold."""
         print('{0}:: {1}'.format(datetime.datetime.now(), s))
+        print('#############################################')
 
     def initialize_options(self):
-        pass
+        self.user = None
+        self.password = None
 
     def finalize_options(self):
         pass
@@ -75,12 +80,11 @@ class UploadCommand(Command):
         os.system('{0} setup.py sdist bdist_wheel --universal'.format(sys.executable))
 
         self.status('Uploading the package to PyPI via Twine…')
-        os.system('twine upload dist/*')
+        if self.user and self.password:
+            os.system('twine upload dist/* -u {0} -p {1}'.format(self.user,self.password))
+        else:
+             os.system('python -m twine upload dist/*')
 
-        self.status('Pushing git tags…')
-        os.system('git tag v{0}'.format(about['__version__']))
-        os.system('git push --tags')
-        
         sys.exit()
 
 class TestCommand(Command):
@@ -93,6 +97,7 @@ class TestCommand(Command):
     def status(s):
         """Prints things in bold."""
         print('{0}:: {1}'.format(datetime.datetime.now(), s))
+        print('#############################################')
 
     def initialize_options(self):
         pass
@@ -106,6 +111,28 @@ class TestCommand(Command):
         input('press any key to finish')
         sys.exit()
 
+class TravisCommand(Command):
+    description = 'Triggers a travis deployment'
+    user_options = []
+
+    @staticmethod
+    def status(s):
+        """Prints things in bold."""
+        print('{0}:: {1}'.format(datetime.datetime.now(), s))
+        print('#############################################')
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        self.status('Pushing git tags…')
+        os.system('git tag v{0}'.format(about['__version__']))
+        os.system('git push --tags')
+        
+        sys.exit()
 
 # Where the magic happens:
 setup(
@@ -127,12 +154,13 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Operating System :: OS Independent',
     ],
     
     cmdclass={
         'upload': UploadCommand,
-        'test': TestCommand
+        'test': TestCommand,
+        'travis': TravisCommand
     },
 )
