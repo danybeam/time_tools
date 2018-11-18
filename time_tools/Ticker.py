@@ -48,7 +48,7 @@ class Ticker:
         self.thread.cancel()
 
 
-class Subject_Ticker(Ticker):
+class Multi_Ticker(Ticker):
     """
         Extention of the Ticker class
         main diference being that you can add observers
@@ -76,7 +76,6 @@ class Subject_Ticker(Ticker):
             as of now there's no way to modify a predifined function
             it's recommended that called functions are as self contained as posible
         """
-
         if args or kwargs:
             self.observers.append(functools.partial(function,*args,**kwargs))
         else:
