@@ -20,40 +20,35 @@ class Ticker:
             args: arguments to be pased as *args
             kwargs: arguments to be passed **kwargs
         """
-
         self.t=t
         if args or kwargs:
             self.ticking_function = functools.partial(callback,*args,**kwargs)
         else:
             self.ticking_function = callback
-
         self.thread = Timer(self.t,self.handle_function)
 
     def handle_function(self):
         """
             Executes the stored function and continues the loop
         """
-
         self.ticking_function()
         self.thread = Timer(self.t,self.handle_function)
-        self.thread.start()
+        self.start()
 
     def start(self):
         """
             Starts the Ticker
         """
-
         self.thread.start()
 
     def cancel(self):
         """
             cancels the Ticker
         """
-
         self.thread.cancel()
 
 
-class Subject_Ticker(Ticker):
+class Multi_Ticker(Ticker):
     """
         Extention of the Ticker class
         main diference being that you can add observers
@@ -69,7 +64,6 @@ class Subject_Ticker(Ticker):
             the default (and only) executable tick function
             goes through the observers and calls it's function
         """
-
         for function in self.observers:
             function()
 
@@ -82,7 +76,6 @@ class Subject_Ticker(Ticker):
             as of now there's no way to modify a predifined function
             it's recommended that called functions are as self contained as posible
         """
-
         if args or kwargs:
             self.observers.append(functools.partial(function,*args,**kwargs))
         else:
